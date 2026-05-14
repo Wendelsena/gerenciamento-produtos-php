@@ -1,13 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ======================================
+    // ELEMENTOS PRINCIPAIS
+    // ======================================
+
     const departamento = document.getElementById('departamento');
     const secao = document.getElementById('secao');
     const grupo = document.getElementById('grupo');
     const subgrupo = document.getElementById('subgrupo');
 
     const btnPesquisar = document.getElementById('btnPesquisar');
+    const btnAlterar = document.getElementById('btnAlterar');
 
-    
+    const grid = document.getElementById('gridProdutos');
+
+    const modalDepartamento = document.getElementById('modalDepartamento');
+    const modalSecao = document.getElementById('modalSecao');
+    const modalGrupo = document.getElementById('modalGrupo');
+    const modalSubgrupo = document.getElementById('modalSubgrupo');
+
+
+    function resetSelect(select) {
+
+        select.innerHTML = '<option value="">Selecione</option>';
+        select.disabled = true;
+    }
+
     async function carregarDepartamentos() {
 
         try {
@@ -16,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const dados = await response.json();
 
-            departamento.innerHTML = '<option value="">Selecione</option>';
+            departamento.innerHTML =
+                '<option value="">Selecione</option>';
 
             dados.forEach(item => {
 
@@ -29,14 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
 
-            console.error('Erro ao carregar departamentos:', error);
+            console.error(
+                'Erro ao carregar departamentos:',
+                error
+            );
         }
-    }
-
-    function resetSelect(select) {
-
-        select.innerHTML = '<option value="">Selecione</option>';
-        select.disabled = true;
     }
 
     departamento.addEventListener('change', async () => {
@@ -61,7 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const dados = await response.json();
 
-            secao.innerHTML = '<option value="">Selecione</option>';
+            secao.innerHTML =
+                '<option value="">Selecione</option>';
 
             dados.forEach(item => {
 
@@ -74,7 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
 
-            console.error('Erro ao carregar seções:', error);
+            console.error(
+                'Erro ao carregar seções:',
+                error
+            );
         }
     });
 
@@ -99,7 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const dados = await response.json();
 
-            grupo.innerHTML = '<option value="">Selecione</option>';
+            grupo.innerHTML =
+                '<option value="">Selecione</option>';
 
             dados.forEach(item => {
 
@@ -112,7 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
 
-            console.error('Erro ao carregar grupos:', error);
+            console.error(
+                'Erro ao carregar grupos:',
+                error
+            );
         }
     });
 
@@ -136,7 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const dados = await response.json();
 
-            subgrupo.innerHTML = '<option value="">Selecione</option>';
+            subgrupo.innerHTML =
+                '<option value="">Selecione</option>';
 
             dados.forEach(item => {
 
@@ -149,7 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
 
-            console.error('Erro ao carregar subgrupos:', error);
+            console.error(
+                'Erro ao carregar subgrupos:',
+                error
+            );
         }
     });
 
@@ -158,64 +186,122 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPesquisar.disabled = !subgrupo.value;
     });
 
-btnPesquisar.addEventListener('click', async () => {
+    btnPesquisar.addEventListener('click', async () => {
 
-    const grid = document.getElementById('gridProdutos');
+        grid.innerHTML = '';
 
-    grid.innerHTML = '';
+        btnAlterar.disabled = true;
 
-    try {
+        try {
 
-        const response = await fetch(
-            `produtos.php?cdg_subgrupo=${subgrupo.value}`
+            const response = await fetch(
+                `produtos.php?cdg_subgrupo=${subgrupo.value}`
+            );
+
+            const produtos = await response.json();
+
+            if (produtos.length === 0) {
+
+                grid.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            Nenhum produto encontrado
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            produtos.forEach(produto => {
+
+                grid.innerHTML += `
+                    <tr>
+
+                        <td>
+                            <input
+                                type="checkbox"
+                                class="produto-checkbox"
+                                value="${produto.cod_barras}"
+                            >
+                        </td>
+
+                        <td>${produto.cod_barras}</td>
+                        <td>${produto.descricao}</td>
+                        <td>${produto.variedade}</td>
+                        <td>${produto.embalagem}</td>
+                        <td>${produto.dcr_depto}</td>
+                        <td>${produto.dcr_secao}</td>
+                        <td>${produto.dcr_grupo}</td>
+                        <td>${produto.dcr_subgrupo}</td>
+
+                    </tr>
+                `;
+            });
+
+            const checkboxes =
+                document.querySelectorAll('.produto-checkbox');
+
+            checkboxes.forEach(item => {
+
+                item.addEventListener('change', () => {
+
+                    const selecionados =
+                        document.querySelectorAll(
+                            '.produto-checkbox:checked'
+                        );
+
+                    btnAlterar.disabled =
+                        selecionados.length === 0;
+                });
+            });
+
+        } catch (error) {
+
+            console.error(
+                'Erro ao carregar produtos:',
+                error
+            );
+        }
+    });
+
+    btnAlterar.addEventListener('click', async () => {
+
+        const modal = new bootstrap.Modal(
+            document.getElementById('modalAlteracao')
         );
 
-        const produtos = await response.json();
+        modal.show();
 
-        if (produtos.length === 0) {
+        try {
 
-            grid.innerHTML = `
-                <tr>
-                    <td colspan="9" class="text-center">
-                        Nenhum produto encontrado
-                    </td>
-                </tr>
-            `;
+            const response = await fetch(
+                'departamentos.php'
+            );
 
-            return;
+            const dados = await response.json();
+
+            modalDepartamento.innerHTML =
+                '<option value="">Selecione</option>';
+
+            dados.forEach(item => {
+
+                modalDepartamento.innerHTML += `
+                    <option value="${item.cdg_depto}">
+                        ${item.dcr_depto}
+                    </option>
+                `;
+            });
+
+        } catch (error) {
+
+            console.error(
+                'Erro ao abrir modal:',
+                error
+            );
         }
+    });
 
-        produtos.forEach(produto => {
-
-            grid.innerHTML += `
-                <tr>
-
-                    <td>
-                        <input
-                            type="checkbox"
-                            class="produto-checkbox"
-                            value="${produto.cod_barras}"
-                        >
-                    </td>
-
-                    <td>${produto.cod_barras}</td>
-                    <td>${produto.descricao}</td>
-                    <td>${produto.variedade}</td>
-                    <td>${produto.embalagem}</td>
-                    <td>${produto.dcr_depto}</td>
-                    <td>${produto.dcr_secao}</td>
-                    <td>${produto.dcr_grupo}</td>
-                    <td>${produto.dcr_subgrupo}</td>
-
-                </tr>
-            `;
-        });
-
-    } catch (error) {
-
-        console.error('Erro ao carregar produtos:', error);
-    }
-});
 
     carregarDepartamentos();
 

@@ -23,7 +23,6 @@
 
         <div class="row g-3">
 
-            <!-- Departamento -->
             <div class="col-md-3">
                 <label class="form-label">Departamento</label>
 
@@ -32,7 +31,6 @@
                 </select>
             </div>
 
-            <!-- Seção -->
             <div class="col-md-3">
                 <label class="form-label">Seção</label>
 
@@ -41,7 +39,6 @@
                 </select>
             </div>
 
-            <!-- Grupo -->
             <div class="col-md-3">
                 <label class="form-label">Grupo</label>
 
@@ -50,7 +47,6 @@
                 </select>
             </div>
 
-            <!-- Subgrupo -->
             <div class="col-md-3">
                 <label class="form-label">Subgrupo</label>
 
@@ -64,6 +60,9 @@
         <div class="mt-4">
             <button id="btnPesquisar" class="btn btn-primary" disabled>
                 Pesquisar
+            </button>
+            <button id="btnAlterar" class="btn btn-warning ms-2" disabled>
+                Alterar
             </button>
         </div>
 
@@ -100,6 +99,139 @@
             </tbody>
 
         </table>
+
+    </div>
+
+</div>
+
+<div
+    class="modal fade"
+    id="modalAlteracao"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Alterar Produtos
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <!-- DEPARTAMENTO -->
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Departamento
+                        </label>
+
+                        <select
+                            id="modalDepartamento"
+                            class="form-select"
+                        >
+                            <option value="">
+                                Selecione
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <!-- SEÇÃO -->
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Seção
+                        </label>
+
+                        <select
+                            id="modalSecao"
+                            class="form-select"
+                            disabled
+                        >
+                            <option value="">
+                                Selecione
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <!-- GRUPO -->
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Grupo
+                        </label>
+
+                        <select
+                            id="modalGrupo"
+                            class="form-select"
+                            disabled
+                        >
+                            <option value="">
+                                Selecione
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <!-- SUBGRUPO -->
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Subgrupo
+                        </label>
+
+                        <select
+                            id="modalSubgrupo"
+                            class="form-select"
+                            disabled
+                        >
+                            <option value="">
+                                Selecione
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="button"
+                    id="btnSalvarAlteracao"
+                    class="btn btn-success"
+                >
+                    Salvar
+                </button>
+
+            </div>
+
+        </div>
 
     </div>
 
