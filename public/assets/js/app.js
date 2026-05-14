@@ -158,6 +158,65 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPesquisar.disabled = !subgrupo.value;
     });
 
+btnPesquisar.addEventListener('click', async () => {
+
+    const grid = document.getElementById('gridProdutos');
+
+    grid.innerHTML = '';
+
+    try {
+
+        const response = await fetch(
+            `produtos.php?cdg_subgrupo=${subgrupo.value}`
+        );
+
+        const produtos = await response.json();
+
+        if (produtos.length === 0) {
+
+            grid.innerHTML = `
+                <tr>
+                    <td colspan="9" class="text-center">
+                        Nenhum produto encontrado
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        produtos.forEach(produto => {
+
+            grid.innerHTML += `
+                <tr>
+
+                    <td>
+                        <input
+                            type="checkbox"
+                            class="produto-checkbox"
+                            value="${produto.cod_barras}"
+                        >
+                    </td>
+
+                    <td>${produto.cod_barras}</td>
+                    <td>${produto.descricao}</td>
+                    <td>${produto.variedade}</td>
+                    <td>${produto.embalagem}</td>
+                    <td>${produto.dcr_depto}</td>
+                    <td>${produto.dcr_secao}</td>
+                    <td>${produto.dcr_grupo}</td>
+                    <td>${produto.dcr_subgrupo}</td>
+
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+
+        console.error('Erro ao carregar produtos:', error);
+    }
+});
+
     carregarDepartamentos();
 
 });
