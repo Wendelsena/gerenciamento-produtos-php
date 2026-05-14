@@ -1,84 +1,163 @@
-const departamento = document.getElementById('departamento');
-const secao = document.getElementById('secao');
-const grupo = document.getElementById('grupo');
-const subgrupo = document.getElementById('subgrupo');
+document.addEventListener('DOMContentLoaded', () => {
 
-const btnPesquisar = document.getElementById('btnPesquisar');
+    const departamento = document.getElementById('departamento');
+    const secao = document.getElementById('secao');
+    const grupo = document.getElementById('grupo');
+    const subgrupo = document.getElementById('subgrupo');
 
-async function carregarDepartamentos() {
+    const btnPesquisar = document.getElementById('btnPesquisar');
 
-    try {
+    
+    async function carregarDepartamentos() {
 
-        const response = await fetch('departamentos.php');
+        try {
 
-        const dados = await response.json();
+            const response = await fetch('departamentos.php');
 
-        departamento.innerHTML = '<option value="">Selecione</option>';
+            const dados = await response.json();
 
-        dados.forEach(item => {
+            departamento.innerHTML = '<option value="">Selecione</option>';
 
-            departamento.innerHTML += `
-                <option value="${item.cdg_depto}">
-                    ${item.dcr_depto}
-                </option>
-            `;
-        });
+            dados.forEach(item => {
 
-    } catch (error) {
+                departamento.innerHTML += `
+                    <option value="${item.cdg_depto}">
+                        ${item.dcr_depto}
+                    </option>
+                `;
+            });
 
-        console.error('Erro ao carregar departamentos:', error);
+        } catch (error) {
+
+            console.error('Erro ao carregar departamentos:', error);
+        }
     }
-}
 
-function resetSelect(select) {
+    function resetSelect(select) {
 
-    select.innerHTML = '<option value="">Selecione</option>';
-    select.disabled = true;
-}
+        select.innerHTML = '<option value="">Selecione</option>';
+        select.disabled = true;
+    }
 
-departamento.addEventListener('change', () => {
+    departamento.addEventListener('change', async () => {
 
-    resetSelect(secao);
-    resetSelect(grupo);
-    resetSelect(subgrupo);
+        resetSelect(secao);
+        resetSelect(grupo);
+        resetSelect(subgrupo);
 
-    btnPesquisar.disabled = true;
+        btnPesquisar.disabled = true;
 
-    if (departamento.value) {
+        if (!departamento.value) {
+            return;
+        }
 
         secao.disabled = false;
-    }
-});
 
-secao.addEventListener('change', () => {
+        try {
 
-    resetSelect(grupo);
-    resetSelect(subgrupo);
+            const response = await fetch(
+                `secoes.php?cdg_depto=${departamento.value}`
+            );
 
-    btnPesquisar.disabled = true;
+            const dados = await response.json();
 
-    if (secao.value) {
+            secao.innerHTML = '<option value="">Selecione</option>';
+
+            dados.forEach(item => {
+
+                secao.innerHTML += `
+                    <option value="${item.cdg_secao}">
+                        ${item.dcr_secao}
+                    </option>
+                `;
+            });
+
+        } catch (error) {
+
+            console.error('Erro ao carregar seções:', error);
+        }
+    });
+
+    secao.addEventListener('change', async () => {
+
+        resetSelect(grupo);
+        resetSelect(subgrupo);
+
+        btnPesquisar.disabled = true;
+
+        if (!secao.value) {
+            return;
+        }
 
         grupo.disabled = false;
-    }
-});
 
-grupo.addEventListener('change', () => {
+        try {
 
-    resetSelect(subgrupo);
+            const response = await fetch(
+                `grupos.php?cdg_secao=${secao.value}`
+            );
 
-    btnPesquisar.disabled = true;
+            const dados = await response.json();
 
-    if (grupo.value) {
+            grupo.innerHTML = '<option value="">Selecione</option>';
+
+            dados.forEach(item => {
+
+                grupo.innerHTML += `
+                    <option value="${item.cdg_grupo}">
+                        ${item.dcr_grupo}
+                    </option>
+                `;
+            });
+
+        } catch (error) {
+
+            console.error('Erro ao carregar grupos:', error);
+        }
+    });
+
+    grupo.addEventListener('change', async () => {
+
+        resetSelect(subgrupo);
+
+        btnPesquisar.disabled = true;
+
+        if (!grupo.value) {
+            return;
+        }
 
         subgrupo.disabled = false;
-    }
+
+        try {
+
+            const response = await fetch(
+                `subgrupos.php?cdg_grupo=${grupo.value}`
+            );
+
+            const dados = await response.json();
+
+            subgrupo.innerHTML = '<option value="">Selecione</option>';
+
+            dados.forEach(item => {
+
+                subgrupo.innerHTML += `
+                    <option value="${item.cdg_subgrupo}">
+                        ${item.dcr_subgrupo}
+                    </option>
+                `;
+            });
+
+        } catch (error) {
+
+            console.error('Erro ao carregar subgrupos:', error);
+        }
+    });
+
+    subgrupo.addEventListener('change', () => {
+
+        btnPesquisar.disabled = !subgrupo.value;
+    });
+
+    carregarDepartamentos();
+
 });
-
-subgrupo.addEventListener('change', () => {
-
-    btnPesquisar.disabled = !subgrupo.value;
-});
-
-
-carregarDepartamentos();
