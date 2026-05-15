@@ -337,9 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error(error);
-            alert(error);
+            alert('Erro ao atualizar produtos');
         }
     });
+
 
     carregarDepartamentos();
 });
